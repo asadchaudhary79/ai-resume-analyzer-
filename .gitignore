@@ -3,8 +3,6 @@
 .env.local
 *.env
 
-docs/
-
 # Python
 __pycache__/
 *.py[cod]
