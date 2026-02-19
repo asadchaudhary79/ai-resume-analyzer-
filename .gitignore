@@ -1,0 +1,38 @@
+# Environment and secrets
+.env
+.env.local
+*.env
+
+docs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+
+# Uploads (keep folder via uploads/.gitkeep)
+uploads/*
+!uploads/.gitkeep
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build and dist
+dist/
+build/
+*.egg-info/
+*.egg

@@ -1,0 +1,75 @@
+# Resume Analyzer — API + DB + Redis + Celery
+# Run: docker compose up -d
+# API: http://localhost:8000  |  Docs: http://localhost:8000/api/v1/docs
+
+services:
+  api:
+    build: .
+    container_name: resume-analyzer-api
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/resume_analyzer
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  db:
+    image: postgres:15-alpine
+    container_name: resume-analyzer-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: resume_analyzer
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: resume-analyzer-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build: .
+    container_name: resume-analyzer-celery
+    command: celery -A app.celery_app worker --loglevel=info
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/resume_analyzer
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      api:
+        condition: service_started
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+
+volumes:
+  uploads_data:
+  postgres_data:
+  redis_data:
