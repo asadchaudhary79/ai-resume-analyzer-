@@ -68,8 +68,6 @@ pytest tests/ -v
 
 ## Project structure
 
-See [docs/development_plan.md](docs/development_plan.md) for the full roadmap and phase status.
-
 ## Tech stack
 
 FastAPI · OpenAI GPT-4o · PyPDF2 / pdfplumber · python-docx · SQLAlchemy · Alembic · PostgreSQL · Redis · Celery · Flower · Docker · SlowAPI
